@@ -21,6 +21,7 @@ public class RocketController : MonoBehaviour
     Rigidbody myRigidbody;
     AudioSource myAudioSource;
 
+    bool isCollisonDisabled;
     enum State {Alive, Dying, Trascending}
     State state = State.Alive;
 
@@ -40,13 +41,17 @@ public class RocketController : MonoBehaviour
             RespondToRotateInput();
            
         }
+        if (Debug.isDebugBuild)
+        {
+            RespondToDebbugKeys();
+        }
         
     }
 
     
     private void OnCollisionEnter(Collision other)
     {
-        if(state != State.Alive)
+        if(state != State.Alive || isCollisonDisabled)
         {
             return;
         }
@@ -90,15 +95,25 @@ public class RocketController : MonoBehaviour
 
     private void LoadNextSccene()
     {
-        SceneManager.LoadScene(1);
         
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneToLoad = currentLevel + 1;
+       
+        if(nextSceneToLoad == SceneManager.sceneCountInBuildSettings)
+        {
+            nextSceneToLoad = 0;
+        }
+        SceneManager.LoadScene(nextSceneToLoad);
+
+
 
     }
 
     private void Death()
     {
-        SceneManager.LoadScene(0);
-        
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentLevel);
+
     }
 
     private void RespondToThrustInput()
@@ -155,5 +170,23 @@ public class RocketController : MonoBehaviour
         myRigidbody.freezeRotation = false; //Resume physics control of rotation
     }
 
-   
+   private void RespondToDebbugKeys()
+    {
+        if (Input.GetKey(KeyCode.L))
+        {
+            int currentLevel = SceneManager.GetActiveScene().buildIndex;
+            int nextSceneToLoad = currentLevel + 1;
+
+            if (nextSceneToLoad == SceneManager.sceneCountInBuildSettings)
+            {
+                nextSceneToLoad = 0;
+            }
+            SceneManager.LoadScene(nextSceneToLoad);
+
+        }
+        else if (Input.GetKey(KeyCode.C))
+        {
+            isCollisonDisabled = !isCollisonDisabled;
+        }
+    }
 }
