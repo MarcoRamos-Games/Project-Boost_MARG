@@ -8,6 +8,7 @@ public class RocketController : MonoBehaviour
 {
     [SerializeField] float thrustForce = 10f;
     [SerializeField] float rotationForce = 10f;
+    [SerializeField] float levelLoadDelay = 1f;
 
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip deathSound;
@@ -74,7 +75,7 @@ public class RocketController : MonoBehaviour
         myAudioSource.PlayOneShot(levelEnd);
         successParticle.Play();
         state = State.Trascending;
-        Invoke("LoadNextSccene", 1f);
+        Invoke("LoadNextSccene", levelLoadDelay);
     }
 
     private void StartDeathSequence()
@@ -83,7 +84,7 @@ public class RocketController : MonoBehaviour
         myAudioSource.PlayOneShot(deathSound);
         deathParticle.Play();
         state = State.Dying;
-        Invoke("Death", 1f);
+        Invoke("Death", levelLoadDelay);
     }
 
 
